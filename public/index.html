@@ -1,0 +1,67 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Quality Knowledge Graph — Predictive Risk Engine</title>
+<style>
+:root{--bg:#0b0f14;--p:#131a23;--p2:#1a232e;--p3:#222d3a;--bd:#24303d;--fg:#e6edf3;--dim:#8b98a5;--d2:#64707d;--g:#3fb950;--r:#f85149;--y:#d29922;--b:#58a6ff;--pu:#bc8cff;--t:#2dd4bf;--gr:linear-gradient(90deg,#3fb950,#2dd4bf)}
+*{box-sizing:border-box;margin:0;padding:0}body{font:14px/1.5 system-ui,sans-serif;background:var(--bg);color:var(--fg)}
+::-webkit-scrollbar{width:8px}::-webkit-scrollbar-thumb{background:var(--bd);border-radius:4px}
+header{position:sticky;top:0;z-index:10;padding:14px 28px;border-bottom:1px solid var(--bd);background:linear-gradient(90deg,rgba(63,185,80,.08),rgba(45,212,191,.08)),var(--bg);display:flex;align-items:center;gap:12px}
+.logo{width:32px;height:32px;border-radius:8px;background:var(--gr);display:flex;align-items:center;justify-content:center;font-size:16px}
+header h1{font-size:16px;font-weight:700}.tag{color:var(--dim);font-size:11px;border:1px solid var(--bd);padding:2px 8px;border-radius:999px;text-transform:uppercase}
+.spacer{flex:1}.badge{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:5px 11px;border-radius:999px;border:1px solid var(--bd);background:var(--p2)}.badge .dot{width:8px;height:8px;border-radius:50%;background:var(--g);animation:p 1.6s infinite}@keyframes p{0%,100%{opacity:1}50%{opacity:.4}}
+main{max-width:1300px;margin:0 auto;padding:24px 28px 80px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:20px}
+.card{background:var(--p);border:1px solid var(--bd);border-radius:10px;padding:16px;position:relative;overflow:hidden}.card::before{content:"";position:absolute;left:0;top:0;width:3px;height:100%;background:var(--b)}.card.g::before{background:var(--g)}.card.r::before{background:var(--r)}.card.y::before{background:var(--y)}.card.pu::before{background:var(--pu)}.card.t::before{background:var(--t)}
+.card .l{font-size:10px;text-transform:uppercase;color:var(--dim)}.card .v{font-size:24px;font-weight:800;font-variant-numeric:tabular-nums;margin-top:4px}.card .v.g{color:var(--g)}.v.r{color:var(--r)}.v.y{color:var(--y)}.v.pu{color:var(--pu)}.v.t{color:var(--t)}
+.panel{background:var(--p);border:1px solid var(--bd);border-radius:10px;overflow:hidden;margin-bottom:20px}.panel h2{font-size:12px;color:var(--dim);text-transform:uppercase;letter-spacing:.06em;padding:14px 18px;border-bottom:1px solid var(--bd)}
+table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:9px 14px;text-align:left;border-bottom:1px solid var(--bd)}th{color:var(--dim);font-size:10px;text-transform:uppercase}
+.bar{height:8px;border-radius:4px;background:var(--p3);overflow:hidden}.bar>span{display:block;height:100%}
+.grid2{display:grid;grid-template-columns:1fr;gap:20px}@media(min-width:1000px){.grid2{grid-template-columns:1fr 1fr}}
+.trace{font-family:monospace;font-size:12px;padding:10px 14px;border-bottom:1px solid var(--bd);color:var(--dim)}.trace b{color:var(--b)}.trace .gap{color:var(--r);font-weight:700}
+.arch{font-size:12px;color:var(--dim);line-height:1.9;padding:14px 18px}.arch b{color:var(--fg)}
+footer{text-align:center;padding:28px;color:var(--d2);font-size:12px;border-top:1px solid var(--bd);margin-top:20px}
+</style></head><body>
+<header><div class="logo">🕸</div><h1>Quality Knowledge Graph</h1><span class="tag">Predictive Risk</span><div class="spacer"></div><span class="badge"><span class="dot"></span><span id="st">live</span></span></header>
+<main>
+<div class="cards" id="cards"></div>
+<div class="grid2">
+<div>
+<div class="panel"><h2>Per-PR Risk Prediction (GNN + LLM)</h2><table><thead><tr><th>Pull Request</th><th>Risk</th><th class="r">Tests Selected</th><th class="r">Confidence</th></tr></thead><tbody id="prs"></tbody></table></div>
+<div class="panel"><h2>Incident → Code → Test Traceability</h2><div id="trace"></div></div>
+</div>
+<div>
+<div class="panel"><h2>SDLC Graph (Neo4j)</h2><div style="padding:14px 18px"><svg id="graph" width="100%" height="280" viewBox="0 0 400 280"></svg></div></div>
+<div class="panel"><h2>Architecture</h2><div class="arch">
+<div>🕸 <b>Neo4j graph</b> — code, service, test, requirement, incident, bug, owner, deploy nodes + edges</div>
+<div>🧠 <b>GNN + LLM</b> — predicts risk per PR from graph features + embeddings</div>
+<div>🎯 <b>Test selection</b> — "run these 12 tests, not all 4,000"</div>
+<div>🔍 <b>Coverage gaps</b> — code with no test, test with no owner</div>
+<div>📜 <b>Traceability</b> — incident → code → test → owner</div>
+<div style="margin-top:8px;color:var(--d2)">Stack: Neo4j · GNN · LLM · GitHub/GitLab API · Jira · CI</div>
+</div></div>
+</div>
+</div></main>
+<footer>Quality Knowledge Graph & Predictive Risk Engine · MIT</footer>
+<script>
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]))}
+async function load(){try{
+const r=await fetch('/api/status');const d=await r.json();
+document.getElementById('st').textContent=`${d.totalNodes} nodes · ${d.totalEdges} edges · CI saved ${d.savings.toFixed(1)}%`;
+document.getElementById('cards').innerHTML=[
+ c('Graph Nodes',d.totalNodes,'b'),c('Graph Edges',d.totalEdges,'t'),
+ c('Coverage Gaps',d.coverageGaps,'r'),c('CI Time Saved',d.savings.toFixed(1)+'%','g'),
+].join('');
+document.getElementById('prs').innerHTML=d.prs.map(p=>{
+ const col=p.risk>0.6?'var(--r)':p.risk>0.3?'var(--y)':'var(--g)';
+ return `<tr><td>${esc(p.pr)}</td><td><div class="bar" style="width:80px"><span style="width:${p.risk*100}%;background:${col}"></span></div> ${(p.risk*100).toFixed(0)}%</td><td class="r">${p.selectedTests}</td><td class="r">${(p.confidence*100).toFixed(0)}%</td></tr>`;
+}).join('');
+document.getElementById('trace').innerHTML=d.traceChains.map(t=>`<div class="trace">${t.replace(/(inc:[^ ]+|svc:[^ ]+|file:[^ ]+|test:[^ ]+|own:[^ ]+)/g,'<b>$1</b>').replace('GAP','<span class="gap">GAP</span>')}</div>`).join('');
+const pos={};const types={service:'#58a6ff',code:'#3fb950',test:'#bc8cff',incident:'#f85149',owner:'#d29922'};
+d.nodes.forEach((n,i)=>{const a=(i/d.nodes.length)*Math.PI*2;pos[n.id]={x:200+Math.cos(a)*120,y:140+Math.sin(a)*90}});
+let svg='';d.edges.forEach(e=>{const a=pos[e[0]],b=pos[e[1]];if(a&&b)svg+=`<line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" stroke="#24303d" stroke-width="1"/>`});
+d.nodes.forEach(n=>{const p=pos[n.id];svg+=`<circle cx="${p.x}" cy="${p.y}" r="10" fill="${types[n.type]||'#888'}" opacity="0.85"/><text x="${p.x}" y="${p.y-14}" fill="#8b98a5" font-size="8" text-anchor="middle">${n.id.split(':')[1]||n.id}</text>`});
+document.getElementById('graph').innerHTML=svg;
+}catch(e){document.getElementById('st').textContent='offline'}}
+function c(l,v,col){return `<div class="card ${col}"><div class="l">${l}</div><div class="v ${col}">${v}</div></div>`}
+load();setInterval(load,4000);
+</script>
+</body></html>
