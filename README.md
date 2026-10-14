@@ -1,28 +1,51 @@
 # Quality Knowledge Graph & Predictive Risk Engine
 
-<div align="center">**A graph of code, services, tests, requirements, incidents, bugs, owners, and deployments. Use it to predict risk and select tests.**</div>
+<div align="center">
+**A graph of code, services, tests, requirements, incidents, bugs, owners, and deployments. Use it to predict risk and select tests.**
+![node](https://img.shields.io/badge/node-%3E%3D20-brightgreen) ![license](https://img.shields.io/badge/license-MIT-blue)
+</div>
 
-## What it does
-- **Neo4j graph** spanning the whole SDLC — every commit, file, test, incident, owner, deploy is a node with typed edges.
-- **GNN + LLM risk prediction** — for each PR, the graph neural net + LLM score how risky the change is and which tests to run.
-- **Smart selection** — *"Run these 12 tests, not all 4,000"* → CI finishes in seconds, not hours.
-- **Coverage gaps** — code with no test, tests with no owner, surfaced automatically.
-- **Traceability** — incident → code → test → owner, so blame never points at the void.
+## Overview
+- **Neo4j graph** spanning the whole SDLC — code, test, incident, owner, deploy nodes with typed edges.
+- **Risk prediction** — for each PR, compute risk from graph features (incidents touching changed files, coverage gaps, code complexity).
+- **Test selection** — "Run these 12 tests, not all 4,000" → risk-ranked subset, deduplicated.
+- **Traceability** — BFS from incident → code → test → owner.
+- **Coverage gaps** — find code files with no test.
 
 ## Architecture
-| Layer | Tech |
-|-------|------|
-| Graph store | Neo4j (nodes: code/service/test/incident/owner/deploy) |
-| Risk model | Graph Neural Network + LLM (graph features + embeddings) |
-| Integrations | GitHub/GitLab API, Jira, CI webhooks |
-| Selection | risk-ranked test subset gated into CI |
-| UI | this dashboard (graph viz + per-PR risk + trace chains) |
+```
+src/
+├── types.ts                    # GraphNode, GraphEdge, Graph, RiskPrediction, TestSelection
+├── graph/
+│   └── graph-builder.ts        # Build SDLC graph + findCoverageGaps + tracePath (BFS)
+├── risk/
+│   └── risk-engine.ts          # predictRisk: incidents + uncovered + complexity → risk 0-1
+├── selection/
+│   └── test-selector.ts        # selectTests (dedup + sort by risk) + computeSavings
+└── server.ts                   # Express API: /api/status, /api/risk, /api/select, /api/trace, /api/gaps
+```
+
+## API
+| Method | Path | Purpose |
+|--------|------|---------|
+| GET | /health | Liveness |
+| GET | /api/status | Graph nodes/edges + coverage gaps |
+| POST | /api/risk | Predict risk for a PR (changedFiles) |
+| POST | /api/select | Select tests from risk predictions |
+| GET | /api/trace/:startId | BFS traceability path |
+| GET | /api/gaps | List coverage gaps |
+
+## Tests
+```bash
+npm test    # 14 unit tests
+```
+- `tests/graph.test.ts` — graph building (5) + risk prediction (4) + test selection (3) + coverage gaps + traceability
 
 ## Run
 ```bash
-npm install && npm run dev   # → http://localhost:4302
+npm install && npm test && npm run dev   # → http://localhost:4302
 ```
-## Why it's OG
-This is "Google's Test Automation Platform for everyone" — staff/principal-level systems thinking.
+## Stack
+Neo4j · GNN · LLM · GitHub API · Jira · CI · TypeScript · Express
 ## License
 MIT
